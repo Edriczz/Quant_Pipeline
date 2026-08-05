@@ -7,7 +7,7 @@ calls through PriceDataLoader cannot reach the internet.
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
@@ -16,10 +16,10 @@ import pytest
 from ou_pipeline.config import PipelineConfig
 from ou_pipeline.data.loader import PriceDataLoader
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_raw_df(n: int = 10, start: str = "2023-01-01") -> pd.DataFrame:
     """Return a minimal yfinance-style DataFrame with a 'Close' column."""
@@ -39,6 +39,7 @@ def _make_loader_with_mock(raw_df: pd.DataFrame, ticker: str = "TEST") -> PriceD
 # ---------------------------------------------------------------------------
 # Tests: load()
 # ---------------------------------------------------------------------------
+
 
 class TestLoad:
     """Tests for PriceDataLoader.load()."""
@@ -90,6 +91,7 @@ class TestLoad:
 # Tests: log_series()
 # ---------------------------------------------------------------------------
 
+
 class TestLogSeries:
     """Tests for PriceDataLoader.log_series()."""
 
@@ -118,6 +120,7 @@ class TestLogSeries:
 # ---------------------------------------------------------------------------
 # Network isolation sanity-check
 # ---------------------------------------------------------------------------
+
 
 def test_yf_download_is_not_called_on_injected_loader() -> None:
     """Verify that the injected loader path never touches yf.download."""

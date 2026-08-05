@@ -10,7 +10,6 @@ decides when to run the test and how to gate on the result.
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 import numpy as np
 from statsmodels.tsa.stattools import adfuller
@@ -37,7 +36,7 @@ class StationarityTester:
             print("Series is mean-reverting at the 5 % level.")
     """
 
-    def __init__(self, config: Optional[PipelineConfig] = None) -> None:
+    def __init__(self, config: PipelineConfig | None = None) -> None:
         self._config = config or PipelineConfig()
 
     def test(self, series: np.ndarray) -> StationarityResult:
@@ -64,9 +63,7 @@ class StationarityTester:
         if series.ndim != 1:
             raise ValueError(f"series must be 1-D, got shape {series.shape}")
         if len(series) < 2:
-            raise ValueError(
-                f"series must have at least 2 observations, got {len(series)}"
-            )
+            raise ValueError(f"series must have at least 2 observations, got {len(series)}")
         if not np.isfinite(series).all():
             raise ValueError("series contains NaN or Inf values")
 
@@ -79,9 +76,7 @@ class StationarityTester:
 
         is_stationary = bool(p_value < self._config.adf_alpha)
 
-        logger.debug(
-            "ADF stat=%.4f  p=%.4f  stationary=%s", adf_stat, p_value, is_stationary
-        )
+        logger.debug("ADF stat=%.4f  p=%.4f  stationary=%s", adf_stat, p_value, is_stationary)
 
         return StationarityResult(
             adf_statistic=float(adf_stat),

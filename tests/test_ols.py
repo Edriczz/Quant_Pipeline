@@ -15,14 +15,13 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from ou_pipeline.config import PipelineConfig
 from ou_pipeline.estimators.ols import OLSEstimator, OUFitError
 from ou_pipeline.models.results import OUResult
-
 
 # ---------------------------------------------------------------------------
 # Shared synthetic generator (same as stationarity tests for consistency)
 # ---------------------------------------------------------------------------
+
 
 def _simulate_ou(
     n: int = 5_000,
@@ -48,6 +47,7 @@ def _simulate_ou(
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def estimator() -> OLSEstimator:
     return OLSEstimator()
@@ -61,6 +61,7 @@ TRUE_SIGMA = 0.3
 # ---------------------------------------------------------------------------
 # Phase 5 gate: synthetic recovery test (noiseless)
 # ---------------------------------------------------------------------------
+
 
 class TestSyntheticRecovery:
     """Fit against a noiseless OU path and verify parameter recovery."""
@@ -81,8 +82,7 @@ class TestSyntheticRecovery:
         result = estimator.fit(series)
         rel_err = abs(result.mu - TRUE_MU) / abs(TRUE_MU)
         assert rel_err < 0.01, (
-            f"mu recovery failed: got {result.mu:.4f}, "
-            f"true={TRUE_MU}, rel_err={rel_err:.2%}"
+            f"mu recovery failed: got {result.mu:.4f}, " f"true={TRUE_MU}, rel_err={rel_err:.2%}"
         )
 
     def test_sigma_within_tolerance(self, estimator: OLSEstimator) -> None:
@@ -112,6 +112,7 @@ class TestSyntheticRecovery:
 # ---------------------------------------------------------------------------
 # Result structure tests
 # ---------------------------------------------------------------------------
+
 
 class TestResultStructure:
     """Verify the returned OUResult is well-formed."""
@@ -149,6 +150,7 @@ class TestResultStructure:
 # OUEstimator interface compliance
 # ---------------------------------------------------------------------------
 
+
 class TestInterfaceCompliance:
     """OLSEstimator must satisfy the OUEstimator contract."""
 
@@ -164,6 +166,7 @@ class TestInterfaceCompliance:
 # ---------------------------------------------------------------------------
 # Error handling tests
 # ---------------------------------------------------------------------------
+
 
 class TestErrorHandling:
     """OLSEstimator must raise appropriate errors on bad input."""

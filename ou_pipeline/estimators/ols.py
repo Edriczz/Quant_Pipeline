@@ -79,8 +79,8 @@ class OLSEstimator(OUEstimator):
         """
         series = validate_series(series, min_length=10)
 
-        x_t = series[:-1]   # X_t
-        x_t1 = series[1:]   # X_{t+1}
+        x_t = series[:-1]  # X_t
+        x_t1 = series[1:]  # X_{t+1}
 
         # OLS: X_{t+1} = a + b * X_t + ε
         slope, intercept, r_value, p_value, _ = stats.linregress(x_t, x_t1)
@@ -110,7 +110,10 @@ class OLSEstimator(OUEstimator):
 
         logger.debug(
             "OLS result: theta=%.4f  mu=%.4f  sigma=%.4f  half_life=%.2f days",
-            theta, mu, sigma, half_life,
+            theta,
+            mu,
+            sigma,
+            half_life,
         )
 
         return OUResult(

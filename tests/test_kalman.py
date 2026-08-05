@@ -22,10 +22,10 @@ from ou_pipeline.estimators.kalman import KalmanEstimator
 from ou_pipeline.estimators.ols import OLSEstimator
 from ou_pipeline.models.results import OUResult
 
-
 # ---------------------------------------------------------------------------
 # Shared synthetic data generators
 # ---------------------------------------------------------------------------
+
 
 def _simulate_ou(
     n: int = 2_000,
@@ -64,12 +64,13 @@ def _add_observation_noise(
 TRUE_THETA = 1.5
 TRUE_MU = 5.0
 TRUE_SIGMA = 0.3
-OBS_NOISE_STD = 0.4   # observation noise std injected in the noisy test
+OBS_NOISE_STD = 0.4  # observation noise std injected in the noisy test
 
 
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def kalman() -> KalmanEstimator:
@@ -84,6 +85,7 @@ def ols() -> OLSEstimator:
 # ---------------------------------------------------------------------------
 # Phase 6 gate: Test 1 — Noiseless sanity check
 # ---------------------------------------------------------------------------
+
 
 class TestNoiselessRecovery:
     """Kalman should recover params as well as OLS on a clean OU path."""
@@ -124,6 +126,7 @@ class TestNoiselessRecovery:
 # Phase 6 gate: Test 2 — The key comparative test on noisy data
 # ---------------------------------------------------------------------------
 
+
 class TestNoisyComparison:
     """On noisy data, Kalman must recover theta closer to truth than OLS.
 
@@ -153,9 +156,7 @@ class TestNoisyComparison:
             "Check the Kalman implementation — it should separate obs noise."
         )
 
-    def test_kalman_obs_noise_approximately_correct(
-        self, kalman: KalmanEstimator
-    ) -> None:
+    def test_kalman_obs_noise_approximately_correct(self, kalman: KalmanEstimator) -> None:
         """Kalman should estimate obs_noise_R near the true noise variance."""
         clean = _simulate_ou(n=2_000, theta=TRUE_THETA, mu=TRUE_MU, sigma=TRUE_SIGMA, seed=1)
         noisy = _add_observation_noise(clean, noise_std=OBS_NOISE_STD, seed=2)
@@ -164,8 +165,7 @@ class TestNoisyComparison:
         true_R = OBS_NOISE_STD**2  # true obs noise variance = 0.16
         # Accept within a factor of 3 (MLE can be noisy on finite samples)
         assert result.extra["obs_noise_R"] < true_R * 3.0, (
-            f"obs_noise_R={result.extra['obs_noise_R']:.4f} far exceeds "
-            f"true_R={true_R:.4f} × 3"
+            f"obs_noise_R={result.extra['obs_noise_R']:.4f} far exceeds " f"true_R={true_R:.4f} × 3"
         )
         assert result.extra["obs_noise_R"] > true_R / 100.0, (
             f"obs_noise_R={result.extra['obs_noise_R']:.4f} is suspiciously tiny "
@@ -176,6 +176,7 @@ class TestNoisyComparison:
 # ---------------------------------------------------------------------------
 # Result structure tests
 # ---------------------------------------------------------------------------
+
 
 class TestResultStructure:
     """Verify the returned OUResult is well-formed."""
@@ -212,6 +213,7 @@ class TestResultStructure:
 # ---------------------------------------------------------------------------
 # Input validation tests
 # ---------------------------------------------------------------------------
+
 
 class TestInputValidation:
     def test_too_short_raises(self, kalman: KalmanEstimator) -> None:

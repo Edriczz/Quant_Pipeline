@@ -26,7 +26,6 @@ Applications", ch. 6.
 from __future__ import annotations
 
 import logging
-from typing import Any
 
 import numpy as np
 from scipy.optimize import minimize
@@ -150,9 +149,13 @@ class KalmanEstimator(OUEstimator):
         log_lik = float(-result.fun)
 
         logger.debug(
-            "Kalman result: theta=%.4f  mu=%.4f  sigma=%.4f  R=%.6f  "
-            "loglik=%.2f  converged=%s",
-            theta_opt, mu_opt, sigma_opt, R_opt, log_lik, converged,
+            "Kalman result: theta=%.4f  mu=%.4f  sigma=%.4f  R=%.6f  " "loglik=%.2f  converged=%s",
+            theta_opt,
+            mu_opt,
+            sigma_opt,
+            R_opt,
+            log_lik,
+            converged,
         )
 
         return OUResult(
@@ -202,7 +205,7 @@ class KalmanEstimator(OUEstimator):
         # H = 1 (identity observation), R = obs noise variance
 
         # Initialise Kalman filter at the stationary distribution
-        x_filt = mu              # filtered state mean
+        x_filt = mu  # filtered state mean
         P_filt = Q / (1.0 - F**2) if (1.0 - F**2) > 0 else 1.0  # stationary var
 
         log_lik = 0.0

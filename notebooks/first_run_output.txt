@@ -17,7 +17,7 @@
 
 [3] OLS estimation …
     theta         : 0.000792  (1/trading-day)
-    mu            : 8.757624  (log-price)
+    mu            : 8.757627  (log-price)
     sigma         : 0.028471
     half-life     : 874.97 trading days
     converged     : True
@@ -27,9 +27,9 @@
 
 [4] Kalman-MLE estimation …
     theta         : 0.002625  (1/trading-day)
-    mu            : 6.985599  (log-price)
-    sigma         : 0.026585
-    half-life     : 264.07 trading days
+    mu            : 6.985475  (log-price)
+    sigma         : 0.026584
+    half-life     : 264.10 trading days
     converged     : True
     obs_noise_R   : 0.000052
     log-likelihood: 1071.32
@@ -37,8 +37,8 @@
 [5] Sanity checks …
     ✅  Kalman theta > 0  (0.0026)
     ✅  Kalman sigma > 0  (0.0266)
-    ✅  Kalman half-life > 0  (264.07 days)
-    ✅  Kalman mu in observed range  (6.9856)
+    ✅  Kalman half-life > 0  (264.10 days)
+    ✅  Kalman mu in observed range  (6.9855)
     ✅  OLS theta > 0  (0.0008)
     ✅  OLS sigma > 0  (0.0285)
 

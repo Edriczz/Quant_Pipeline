@@ -18,10 +18,10 @@ from ou_pipeline.config import PipelineConfig
 from ou_pipeline.diagnostics.stationarity import StationarityTester
 from ou_pipeline.models.results import StationarityResult
 
-
 # ---------------------------------------------------------------------------
 # Synthetic data generators
 # ---------------------------------------------------------------------------
+
 
 def _simulate_ou(
     n: int = 1_000,
@@ -78,6 +78,7 @@ def _simulate_random_walk(
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def tester() -> StationarityTester:
     """Default StationarityTester with alpha=0.05."""
@@ -87,6 +88,7 @@ def tester() -> StationarityTester:
 # ---------------------------------------------------------------------------
 # Core gate tests (required by Phase 3 gate)
 # ---------------------------------------------------------------------------
+
 
 class TestSyntheticClassification:
     """The two synthetic cases that constitute the Phase 3 gate."""
@@ -116,6 +118,7 @@ class TestSyntheticClassification:
 # Result structure tests
 # ---------------------------------------------------------------------------
 
+
 class TestResultStructure:
     """Verify the returned dataclass is well-formed."""
 
@@ -144,6 +147,7 @@ class TestResultStructure:
 # ---------------------------------------------------------------------------
 # Input validation tests
 # ---------------------------------------------------------------------------
+
 
 class TestInputValidation:
     """StationarityTester must reject bad inputs with ValueError."""

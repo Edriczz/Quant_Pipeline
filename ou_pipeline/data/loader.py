@@ -9,7 +9,6 @@ synthetic data in tests without hitting the network.
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -38,11 +37,11 @@ class PriceDataLoader:
     def __init__(
         self,
         ticker: str,
-        config: Optional[PipelineConfig] = None,
+        config: PipelineConfig | None = None,
     ) -> None:
         self._ticker = ticker
         self._config = config or PipelineConfig()
-        self._df: Optional[pd.DataFrame] = None  # cached after first load()
+        self._df: pd.DataFrame | None = None  # cached after first load()
 
     # ------------------------------------------------------------------
     # Public API

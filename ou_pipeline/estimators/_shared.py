@@ -76,9 +76,7 @@ def validate_series(series: np.ndarray, min_length: int = 10) -> np.ndarray:
     if series.ndim != 1:
         raise ValueError(f"series must be 1-D, got shape {series.shape}")
     if len(series) < min_length:
-        raise ValueError(
-            f"series must have at least {min_length} observations, got {len(series)}"
-        )
+        raise ValueError(f"series must have at least {min_length} observations, got {len(series)}")
     if not np.isfinite(series).all():
         raise ValueError("series contains NaN or Inf values")
     return series

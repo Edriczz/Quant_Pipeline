@@ -13,7 +13,6 @@ Output is also saved to notebooks/first_run_output.txt.
 from __future__ import annotations
 
 import io
-import sys
 from contextlib import redirect_stdout
 
 from ou_pipeline.config import PipelineConfig
@@ -23,12 +22,14 @@ from ou_pipeline.estimators.kalman import KalmanEstimator
 from ou_pipeline.estimators.ols import OLSEstimator, OUFitError
 
 
-def run(cfg: PipelineConfig = PipelineConfig()) -> None:
+def run(cfg: PipelineConfig | None = None) -> None:
     """Run the full pipeline on real ASML data and print results."""
+    if cfg is None:
+        cfg = PipelineConfig()
     sep = "=" * 60
 
     print(sep)
-    print(f"  OU Pipeline — Integration Run")
+    print("  OU Pipeline — Integration Run")
     print(f"  Ticker: {cfg.ticker}  |  Period: {cfg.period}")
     print(sep)
 
@@ -51,8 +52,7 @@ def run(cfg: PipelineConfig = PipelineConfig()) -> None:
     stat_result = tester.test(log_s)
     print(f"    ADF statistic : {stat_result.adf_statistic:.4f}")
     print(f"    p-value       : {stat_result.p_value:.4f}")
-    print(f"    Stationary    : {stat_result.is_stationary}  "
-          f"(alpha={cfg.adf_alpha})")
+    print(f"    Stationary    : {stat_result.is_stationary}  " f"(alpha={cfg.adf_alpha})")
 
     if not stat_result.is_stationary:
         print("    ⚠  Series did NOT pass the ADF test at the chosen alpha.")
@@ -108,8 +108,10 @@ def run(cfg: PipelineConfig = PipelineConfig()) -> None:
 
     check(kalman_result.theta > 0, f"Kalman theta > 0  ({kalman_result.theta:.4f})")
     check(kalman_result.sigma > 0, f"Kalman sigma > 0  ({kalman_result.sigma:.4f})")
-    check(kalman_result.half_life_days > 0,
-          f"Kalman half-life > 0  ({kalman_result.half_life_days:.2f} days)")
+    check(
+        kalman_result.half_life_days > 0,
+        f"Kalman half-life > 0  ({kalman_result.half_life_days:.2f} days)",
+    )
     # mu should be within the observed log-price range
     check(
         log_s.min() <= kalman_result.mu <= log_s.max(),
