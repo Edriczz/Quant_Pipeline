@@ -6,8 +6,12 @@ so the Streamlit layer uses attribute access (``result.theta``) rather
 than dict-key guessing.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from typing import Any
+
+import numpy as np
 
 
 @dataclass(frozen=True)
@@ -56,3 +60,16 @@ class StationarityResult:
     adf_statistic: float
     p_value: float
     is_stationary: bool  # p_value < alpha
+
+
+@dataclass(frozen=True)
+class DetrendResult:
+    """Result of a series detrending transformation.
+
+    Attributes:
+        residual: Detrended 1-D array (original series minus baseline).
+        baseline: Trend / baseline 1-D array of the same shape as residual.
+    """
+
+    residual: np.ndarray
+    baseline: np.ndarray

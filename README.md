@@ -2,27 +2,30 @@
 
 A robust, object-oriented Python quantitative pipeline and interactive Streamlit dashboard for estimating Ornstein-Uhlenbeck (OU) stochastic process parameters on financial price series.
 
-It validates whether mean-reversion is statistically supported using Augmented Dickey-Fuller (ADF) stationarity diagnostics, fits parameters using multiple independent estimators (**AR(1) OLS** and **State-Space Kalman Filter MLE**), and presents live results with equilibrium confidence bands.
+It validates whether mean-reversion is statistically supported using Augmented Dickey-Fuller (ADF) stationarity diagnostics, fits parameters using multiple independent estimators (**AR(1) OLS** and **State-Space Kalman Filter MLE**), supports **rolling-mean detrending** for trending assets, and presents live results with equilibrium confidence bands.
 
 ---
 
 ## 🎯 Purpose & Overview
 
-In financial modeling, mean-reversion strategies rely on identifying assets whose price or log-price processes revert to a long-run equilibrium mean ($\mu$) over a characteristic half-life ($t_{1/2}$).
+In financial modeling, mean-reversion strategies rely on identifying assets whose price or log-price processes revert to an equilibrium baseline over a characteristic half-life ($t_{1/2}$).
 
-Standard regression techniques (OLS) often confuse **measurement/observation noise** (e.g., bid-ask bounce or microstructure noise) with **process diffusion**, biasing the mean-reversion speed ($\theta$) downward. This pipeline implements a state-space model solved via a **Kalman Filter with Maximum Likelihood Estimation (MLE)** to separate observation noise $R$ from process variance $Q$, producing vastly superior parameter recovery on noisy empirical data.
+1. **Raw Price Mode (Fixed Mean):** Tests whether price reverts to ONE fixed mean ($\mu$) over the entire lookback window.
+2. **Detrended Mode (Moving Baseline):** Subtracts a rolling moving average ($N$-day baseline) first, testing whether price oscillates around its own recent moving baseline. This is especially relevant for trending stocks (such as ASML or NVDA) where raw ADF tests fail due to long-term secular growth, but short-term mean-reversion around local moving averages remains strong.
+
+Furthermore, standard regression techniques (OLS) often confuse **measurement/observation noise** (e.g., bid-ask bounce or microstructure noise) with **process diffusion**, biasing the mean-reversion speed ($\theta$) downward. This pipeline implements a state-space model solved via a **Kalman Filter with Maximum Likelihood Estimation (MLE)** to separate observation noise $R$ from process variance $Q$, producing vastly superior parameter recovery on noisy empirical data.
 
 ---
 
 ## 📐 Mathematical Foundations
 
 ### 1. The Continuous-Time OU Process
-The stochastic differential equation (SDE) for an Ornstein-Uhlenbeck process $X_t = \ln(P_t)$ is:
+The stochastic differential equation (SDE) for an Ornstein-Uhlenbeck process $X_t = \ln(P_t)$ (or detrended residual $X_t = \ln(P_t) - \text{MA}_t$) is:
 
 $$dX_t = \theta (\mu - X_t) dt + \sigma dW_t$$
 
 - $\theta > 0$: Speed of mean-reversion (units: $1 / \text{trading-day}$).
-- $\mu$: Long-run equilibrium mean (log-price level).
+- $\mu$: Long-run equilibrium mean / residual offset.
 - $\sigma > 0$: Instantaneous volatility coefficient.
 - $W_t$: Standard Brownian motion.
 
@@ -53,7 +56,12 @@ where process noise variance $Q = \frac{\sigma^2}{2\theta}(1 - e^{-2\theta \Delt
 ---
 
 ### 4. Stationarity Diagnostic (`StationarityTester`)
-Runs an **Augmented Dickey-Fuller (ADF)** unit-root test on log-prices prior to model interpretation. If the p-value exceeds $\alpha = 0.05$, the pipeline explicitly warns that mean-reversion is not statistically supported.
+Runs an **Augmented Dickey-Fuller (ADF)** unit-root test on log-prices (or detrended residuals) prior to model interpretation. If the p-value exceeds $\alpha = 0.05$, the pipeline explicitly warns that mean-reversion is not statistically supported.
+
+---
+
+### 5. Rolling-Mean Detrending (`RollingMeanDetrender`)
+Decoupled transformation ($Y_t = X_t - \text{MA}_N(X)$) implemented via `SeriesTransformer` interface. Allows testing local mean-reversion around a moving baseline without modifying estimator internals.
 
 ---
 
@@ -76,20 +84,25 @@ project/
 │   │   ├── _shared.py         # Shared math helpers (half-life, transforms)
 │   │   ├── ols.py             # OLSEstimator (AR(1) regression)
 │   │   └── kalman.py          # KalmanEstimator (State-space MLE)
+│   ├── preprocessing/
+│   │   ├── __init__.py
+│   │   ├── base.py            # SeriesTransformer ABC
+│   │   └── rolling_mean.py    # RollingMeanDetrender class
 │   ├── diagnostics/
 │   │   ├── __init__.py
 │   │   └── stationarity.py    # StationarityTester class (ADF test)
 │   └── models/
 │       ├── __init__.py
-│       └── results.py         # OUResult, StationarityResult dataclasses
+│       └── results.py         # OUResult, StationarityResult, DetrendResult
 ├── app/
 │   └── streamlit_app.py       # UI ONLY — Streamlit dashboard layout
-├── tests/                     # Full Pytest test suite (48 tests)
+├── tests/                     # Full Pytest test suite (67 tests)
 │   ├── test_loader.py
 │   ├── test_stationarity.py
 │   ├── test_ols.py
 │   ├── test_kalman.py
-│   └── test_interpretation.py
+│   ├── test_interpretation.py
+│   └── test_rolling_mean.py
 ├── notebooks/                 # Exploratory runs & integration output
 │   └── manual_run.py
 ├── requirements.txt
@@ -114,16 +127,12 @@ pip install -e .
 streamlit run app/streamlit_app.py
 ```
 
-### 3. Run Manual Integration Check on ASML
-```bash
-python notebooks/manual_run.py
-```
-
 ---
 
 ## 🧪 Verification & Test Suite
 
-The test suite contains **48 unit and integration tests** validating math correctness against synthetic data:
+The test suite contains **67 unit and integration tests** validating math correctness against synthetic data:
+- **Synthetic Detrending Gate Test:** Proves that on trend + wiggle data, raw ADF fails while detrended residual ADF passes.
 - **Synthetic Recovery Test:** Verifies that estimators accurately recover known $(\theta, \mu, \sigma)$ on generated OU paths.
 - **Noise Filtering Proof:** Asserts that `KalmanEstimator` recovers mean-reversion speed $\theta$ significantly closer to the true value than `OLSEstimator` on noisy series.
 - **Stationarity Classification:** Validates ADF classification on synthetic mean-reverting vs. random-walk paths.

@@ -6,7 +6,8 @@ description:
 NAVIGATION
 Position: 3 of 3 in the build workflow.
 Prerequisite: 02_estimators.md complete (Phases 5-7 gates all passed).
-On completion of Phase 10's gate: project is done. No further file.
+On completion of Phase 10's gate: base pipeline is done and deployed.
+Optional extension: 04_detrending_extension.md (Phases 11-14).
 Index: 00_INDEX.md
 -->
 
@@ -73,6 +74,19 @@ the numbers.
 
 **Gate:** Live deployed link works standalone, README is readable by
 someone who has never seen the design conversation behind this project.
+
+---
+
+## End of Part 3 — Base Pipeline Complete
+
+All three gates above (Phases 8–10) must be green. There is no required
+further phase document — the base pipeline satisfies the Definition of
+Done in `PROJECT_RULES.md` §8 for every component at this point.
+
+**Optional next step:** if you want to test mean-reversion relative to
+a moving baseline rather than one fixed long-run mean (see the
+detrending discussion), continue to `04_detrending_extension.md` and
+start at Phase 11.
 
 ---
 
