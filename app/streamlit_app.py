@@ -84,7 +84,7 @@ def _render_sidebar() -> tuple[str, str, str, float, bool]:
     ticker = st.sidebar.text_input("Ticker Symbol", value="ASML").strip().upper()
     period = st.sidebar.selectbox(
         "Lookback Period",
-        options=["6m", "1y", "2y", "5y", "max"],
+        options=["6mo", "1y", "2y", "5y", "max"],
         index=2,
     )
     method = st.sidebar.radio(
