@@ -1,0 +1,49 @@
+============================================================
+  OU Pipeline — Integration Run
+  Ticker: ASML  |  Period: 2y
+============================================================
+
+[1] Loading price data via PriceDataLoader …
+    Loaded 501 trading days
+    Price range: 588.16 – 1986.87
+    Log-price range: 6.3770 – 7.5943
+
+[2] ADF stationarity test …
+    ADF statistic : -0.2054
+    p-value       : 0.9379
+    Stationary    : False  (alpha=0.05)
+    ⚠  Series did NOT pass the ADF test at the chosen alpha.
+       OU parameters will still be estimated, but interpret with caution.
+
+[3] OLS estimation …
+    theta         : 0.000792  (1/trading-day)
+    mu            : 8.757624  (log-price)
+    sigma         : 0.028471
+    half-life     : 874.97 trading days
+    converged     : True
+    AR(1) coef b  : 0.999208
+    AR(1) p-value : 0.0000e+00
+    R²            : 0.992643
+
+[4] Kalman-MLE estimation …
+    theta         : 0.002625  (1/trading-day)
+    mu            : 6.985599  (log-price)
+    sigma         : 0.026585
+    half-life     : 264.07 trading days
+    converged     : True
+    obs_noise_R   : 0.000052
+    log-likelihood: 1071.32
+
+[5] Sanity checks …
+    ✅  Kalman theta > 0  (0.0026)
+    ✅  Kalman sigma > 0  (0.0266)
+    ✅  Kalman half-life > 0  (264.07 days)
+    ✅  Kalman mu in observed range  (6.9856)
+    ✅  OLS theta > 0  (0.0008)
+    ✅  OLS sigma > 0  (0.0285)
+
+    6/6 sanity checks passed.
+
+============================================================
+  Integration run complete.
+============================================================
